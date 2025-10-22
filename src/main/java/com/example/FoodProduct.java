@@ -32,9 +32,10 @@ public class FoodProduct extends Product implements Perishable, Shippable {
     }
 
     //Shipping rule: cost = weight * 50.
-    private static BigDecimal shippingRule (BigDecimal weight) {
-        BigDecimal shippingCost = weight.multiply(BigDecimal.valueOf(50));
-        return shippingCost;
+    @Override
+    public BigDecimal calculateShippingCost () {
+       return weight.multiply(BigDecimal.valueOf(50));
+
     }
 
 }

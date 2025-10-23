@@ -25,11 +25,8 @@ public class Warehouse {
 
     /*TODO Gör klart warehouse enl. instruktioner
     Grejer som är kvar:
-
-     getProductById(UUID): return Optional.
-    - updateProductPrice(UUID, BigDecimal): when not found, throw NoSuchElementException("Product not found with id:"). Also track changed products in getChangedProducts().
-    - expiredProducts(): return List that are expired.
-    - shippableProducts(): return List from stored products.
+     //TODO updateProductPrice(UUID, BigDecimal): when not found, throw NoSuchElementException("Product not found with id:"). Also track changed products in getChangedProducts().
+    //TODO- expiredProducts(): return List that are expired.
     - remove(UUID): remove the matching product if present.
      */
 
@@ -44,4 +41,23 @@ public class Warehouse {
     public List<Product> getProducts() {
         return Collections.unmodifiableList(new ArrayList<>(products));
     }
+    // Search trough warehouse products and return first product id that matches value
+    public Optional <Product> getProductById(UUID id) {
+        return products.stream()
+                .filter(p ->p.uuid().equals(id) )
+                .findFirst();
+    }
+
+    //TODO updateProductPrice(UUID, BigDecimal): when not found, throw NoSuchElementException("Product not found with id:"). Also track changed products in getChangedProducts().
+    //TODO- expiredProducts(): return List that are expired.
+
+
+    //Create and return List with products that implements shippable
+    public List<Shippable> shippableProducts() {
+        return products.stream()
+                        .filter(product -> product instanceof Shippable)
+                        .map(product -> (Shippable) product)
+                        .toList();
+    }
+
 }

@@ -26,15 +26,21 @@ public class ElectronicsProduct extends Product implements Shippable {
 
     //Shipping rule: base 79, add 49 if weight > 5.0 kg.
     //BigDecimal is an object
-    public static BigDecimal shippingRule (BigDecimal weight){
-      BigDecimal shippingCost = new BigDecimal(79.0);
-      BigDecimal extraCost = new BigDecimal(49.0);
-      BigDecimal weightLimit = new BigDecimal(5.0);
+    @Override
+    public BigDecimal calculateShippingCost () {
+        BigDecimal shippingCost = new BigDecimal(79.0);
+        BigDecimal extraCost = new BigDecimal(49.0);
+        BigDecimal weightLimit = new BigDecimal(5.0);
 
-      //compareto returns 0 if the weight is the SAME as weightlimit.
-      if (weight.compareTo(weightLimit) > 0)
-          shippingCost.add(extraCost);
-    return shippingCost;
+        //compareto returns 0 if the weight is the SAME as weightlimit.
+        if (weight.compareTo(weightLimit) > 0) {
+            shippingCost = shippingCost.add(extraCost);
+        }
+        return shippingCost;
+        }
 
+    @Override
+    public BigDecimal weight() {
+        return weight;
     }
 }

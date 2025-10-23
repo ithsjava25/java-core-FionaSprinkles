@@ -49,8 +49,16 @@ public class Warehouse {
     }
 
     //TODO updateProductPrice(UUID, BigDecimal): when not found, throw NoSuchElementException("Product not found with id:"). Also track changed products in getChangedProducts().
-    //TODO- expiredProducts(): return List that are expired.
 
+
+    //Returns all expired products
+    public List<Perishable> expiredProducts() {
+        return products.stream()
+                .filter(product -> product instanceof Perishable)
+                .map(product -> (Perishable)product)
+                .filter(Perishable::isExpired)
+                .toList();
+    }
 
     //Create and return List with products that implements shippable
     public List<Shippable> shippableProducts() {

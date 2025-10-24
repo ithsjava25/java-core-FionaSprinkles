@@ -31,6 +31,9 @@ public class Category {
         //if a category has the same normalized name as previous = return. Otherwise = create new hashMap key-value pair in categories
         return categories.computeIfAbsent(formatName, key -> new Category(key));
     }
+    public String getName() {
+        return name;
+    }
 
     @Override
     public String toString() {

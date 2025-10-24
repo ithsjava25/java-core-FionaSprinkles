@@ -37,5 +37,14 @@ public class FoodProduct extends Product implements Perishable, Shippable {
 
     }
 
+    @Override
+    public LocalDate expirationDate() {
+        return null;
+    }
+
+    @Override
+    public BigDecimal weight() {
+        return null;
+    }
 }
 

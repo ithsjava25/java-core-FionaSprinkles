@@ -2,6 +2,7 @@ package com.example;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Warehouse {
 
@@ -76,5 +77,16 @@ public class Warehouse {
 
     public void remove (UUID id){
         products.removeIf(product -> product.uuid().equals(id));
+    }
+
+    public Map<Category, List<Product>> getProductsGroupedByCategories() {
+        return getProducts().stream()
+                .collect(Collectors.groupingBy(Product::category));
+    }
+    public void clearProducts(){
+        products.clear();
+    }
+    public boolean isEmpty() {
+        return products.isEmpty();
     }
 }

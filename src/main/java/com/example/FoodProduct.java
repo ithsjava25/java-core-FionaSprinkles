@@ -25,7 +25,6 @@ public class FoodProduct extends Product implements Perishable, Shippable {
     }
 
     //productDetails() should look like: "Food: Milk, Expires: 2025-12-24".
-    //todo: I guess this is my gettermethod from product.
     @Override
     String productDetails() {
         return "Food: " + name() + ", Expires: " + expirationDate;

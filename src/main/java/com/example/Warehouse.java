@@ -1,5 +1,6 @@
 package com.example;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class Warehouse {
@@ -8,6 +9,7 @@ public class Warehouse {
     private static final Map<String, Warehouse> warehouses = new HashMap<>();
     private final String name;
     private final Set<Product> products;
+    private final Set<Product> changedProducts = new HashSet<>();
 
     private Warehouse(String name, Set<Product> products) {
         this.name = name;
@@ -21,14 +23,6 @@ public class Warehouse {
         //Create new warehouse and hashset
         return warehouses.computeIfAbsent(name, key -> new Warehouse(key,new HashSet<>()));
     }
-
-
-    /*TODO Gör klart warehouse enl. instruktioner
-    Grejer som är kvar:
-     //TODO updateProductPrice(UUID, BigDecimal): when not found, throw NoSuchElementException("Product not found with id:"). Also track changed products in getChangedProducts().
-    //TODO- expiredProducts(): return List that are expired.
-    - remove(UUID): remove the matching product if present.
-     */
 
     //Validate and add product
     public void addProduct(Product product) {
@@ -48,8 +42,20 @@ public class Warehouse {
                 .findFirst();
     }
 
-    //TODO updateProductPrice(UUID, BigDecimal): when not found, throw NoSuchElementException("Product not found with id:"). Also track changed products in getChangedProducts().
+    //Find product via UUID. change price and add to list
+    public void updateProductPrice(UUID id, BigDecimal newPrice) {
+        Product product = products.stream()
+                .filter(p -> p.uuid().equals(id))
+                .findFirst().orElseThrow(() -> new NoSuchElementException("Product not found with id: " + id));
 
+        product.price(newPrice);
+        changedProducts.add(product);
+    }
+    //Also track changed products in getChangedProducts().
+    //Can't find this in BasicTest??
+    public List<Product> getChangedProducts(){
+        return Collections.unmodifiableList(new ArrayList<>(changedProducts));
+    }
 
     //Returns all expired products
     public List<Perishable> expiredProducts() {
@@ -68,4 +74,7 @@ public class Warehouse {
                         .toList();
     }
 
+    public void remove (UUID id){
+        products.removeIf(product -> product.uuid().equals(id));
+    }
 }

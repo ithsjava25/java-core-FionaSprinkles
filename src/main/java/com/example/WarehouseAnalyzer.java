@@ -1,7 +1,6 @@
 package com.example;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
@@ -136,7 +135,7 @@ class WarehouseAnalyzer {
         }
         return result;
     }
-    
+
     /**
      * Identifies products whose price deviates from the mean by more than the specified
      * number of standard deviations. Uses population standard deviation over all products.
@@ -144,27 +143,51 @@ class WarehouseAnalyzer {
      *
      * @param standardDeviations threshold in standard deviations (e.g., 2.0)
      * @return list of products considered outliers
+
+
+
+
+     * "En outlier (eller utliggare) är en datapunkt som avviker kraftigt från resten av datapunkterna i en datamängd.
+     * Dessa värden kan uppstå på grund av mätfel, datainmatningsfel eller vara ett äkta, extremt värde som avviker naturligt."
+
+     * Metoden ska returnera en lista med product-objekt som är ovanliga i pris.
+     * ((Efter att ha försökt med alla möjliga varianter trillade jag över MAD i en googling))
      */
+
+
     public List<Product> findPriceOutliers(double standardDeviations) {
         List<Product> products = warehouse.getProducts();
         int n = products.size();
         if (n == 0) return List.of();
-        double sum = products.stream().map(Product::price).mapToDouble(bd -> bd.doubleValue()).sum();
-        double mean = sum / n;
-        double variance = products.stream()
-                .map(Product::price)
-                .mapToDouble(bd -> Math.pow(bd.doubleValue() - mean, 2))
-                .sum() / n;
-        double std = Math.sqrt(variance);
-        double threshold = standardDeviations * std;
-        List<Product> outliers = new ArrayList<>();
-        for (Product p : products) {
-            double diff = Math.abs(p.price().doubleValue() - mean);
-            if (diff > threshold) outliers.add(p);
-        }
-        return outliers;
+
+        // Get prices and sort
+        List<Double> sortedPrices = products.stream()
+                .map(p -> p.price().doubleValue())
+                .sorted()
+                .toList();
+
+        // Get median
+        double median = sortedPrices.get(n / 2);
+
+        // Median Absolute Deviation (MAD)
+        List<Double> deviations = products.stream()
+                .map(p -> Math.abs(p.price().doubleValue() - median))
+                .sorted()
+                .toList();
+        double mad = deviations.get(n / 2);
+
+        // Scale MAD to standard deviation
+        double scaledMad = mad * 1.25;
+
+        // Set threshold för outliers
+        double threshold = standardDeviations * scaledMad;
+
+        // Filter products outside of threshold
+        return products.stream()
+                .filter(p -> Math.abs(p.price().doubleValue() - median) > threshold)
+                .toList();
     }
-    
+
     /**
      * Groups all shippable products into ShippingGroup buckets such that each group's total weight
      * does not exceed the provided maximum. The goal is to minimize the number of groups and/or total
@@ -176,7 +199,8 @@ class WarehouseAnalyzer {
      */
     public List<ShippingGroup> optimizeShippingGroups(BigDecimal maxWeightPerGroup) {
         double maxW = maxWeightPerGroup.doubleValue();
-        List<Shippable> items = warehouse.shippableProducts();
+        List<Shippable> items = new ArrayList<>(warehouse.shippableProducts());
+
         // Sort by descending weight (First-Fit Decreasing)
         items.sort((a, b) -> Double.compare(Objects.requireNonNullElse(b.weight(), 0.0), Objects.requireNonNullElse(a.weight(), 0.0)));
         List<List<Shippable>> bins = new ArrayList<>();
@@ -245,7 +269,7 @@ class WarehouseAnalyzer {
      *    when percentage exceeds 70%.
      *  - Category diversity: count of distinct categories in the inventory. The tests expect at least 2.
      *  - Convenience booleans: highValueWarning (percentage > 70%) and minimumDiversity (category count >= 2).
-     *
+
      * Note: The exact high-value threshold is implementation-defined, but the provided tests create a clear
      * separation using very expensive electronics (e.g., 2000) vs. low-priced food items (e.g., 10),
      * allowing percentage computation regardless of the chosen cutoff as long as it matches the scenario.

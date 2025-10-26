@@ -28,7 +28,7 @@ public class Warehouse {
     //Validate and add product
     public void addProduct(Product product) {
         if  (product == null) {
-            throw new IllegalArgumentException("Product cannot be null");
+            throw new IllegalArgumentException("Product cannot be null.");
         }
         products.add(product);
     }

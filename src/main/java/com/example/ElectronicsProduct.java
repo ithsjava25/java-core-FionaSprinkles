@@ -15,22 +15,22 @@ public class ElectronicsProduct extends Product implements Shippable {
         this.weight = weight;
 
         if (warrantymonths < 0)
-            throw new IllegalArgumentException("Warranty months cannot be negative");
+            throw new IllegalArgumentException("Warranty months cannot be negative.");
     }
 
     //productDetails() should look like: "Electronics: Laptop, Warranty: 24 months".
     @Override
     String productDetails() {
-        return "Electronics "+ name() + "Warranty: "+ warrantymonths ;
+        return "Electronics: "+ name() + ", Warranty: "+ warrantymonths + " months" ;
     }
 
     //Shipping rule: base 79, add 49 if weight > 5.0 kg.
     //BigDecimal is an object
     @Override
     public BigDecimal calculateShippingCost () {
-        BigDecimal shippingCost = new BigDecimal(79.0);
-        BigDecimal extraCost = new BigDecimal(49.0);
-        BigDecimal weightLimit = new BigDecimal(5.0);
+        BigDecimal shippingCost = new BigDecimal("79.0");
+        BigDecimal extraCost = new BigDecimal("49.0");
+        BigDecimal weightLimit = new BigDecimal("5.0");
 
         //compareto returns 0 if the weight is the SAME as weightlimit.
         if (weight.compareTo(weightLimit) > 0) {
@@ -40,7 +40,7 @@ public class ElectronicsProduct extends Product implements Shippable {
         }
 
     @Override
-    public BigDecimal weight() {
-        return weight;
+    public double weight() {
+        return weight.doubleValue();
     }
 }

@@ -16,10 +16,10 @@ public class FoodProduct extends Product implements Perishable, Shippable {
         this.weight = weight;
 
         if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Price can't be negative");
+            throw new IllegalArgumentException("Price cannot be negative.");
         }
         if (weight.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Weight can't be negative");
+            throw new IllegalArgumentException("Weight cannot be negative.");
         }
 
     }
@@ -39,12 +39,12 @@ public class FoodProduct extends Product implements Perishable, Shippable {
 
     @Override
     public LocalDate expirationDate() {
-        return null;
+        return this.expirationDate;
     }
 
     @Override
-    public BigDecimal weight() {
-        return null;
+    public double weight() {
+        return this.weight.doubleValue();
     }
 }
 
